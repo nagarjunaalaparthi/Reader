@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,8 +16,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,11 +44,16 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
 
     private View mRootView;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private AppBarLayout appBarLayout;
     private Toolbar toolbar;
     private ImageView mImageBanner;
     private TextView newsTextView;
+    protected TextView mDateTextView;
+
 
     public static final String ARG_ITEM_ID = "item_id";
+
+    private boolean isHideToolbarView = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -70,6 +80,7 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
 
         setHasOptionsMenu(true);
     }
+
 
     public ArticleDetailActivity getActivityCast() {
         return (ArticleDetailActivity) getActivity();
@@ -100,18 +111,27 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
 
         toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
 
+
+        mDateTextView = (TextView) mRootView.findViewById(R.id.article_time_textView);
+
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
-        if (((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+        setToolBar();
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
+
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
-                        .setText("Some sample text")
+                        .setText(mCursor != null ? mCursor.getString(ArticleLoader.Query.TITLE)
+                                : getString(R.string.share_text))
                         .getIntent(), getString(R.string.action_share)));
             }
         });
@@ -119,6 +139,15 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
         bindViews();
         return mRootView;
     }
+
+    private void setToolBar() {
+        if (((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+    }
+
     private void bindViews() {
         if (mRootView != null) {
             collapsingToolbarLayout = (CollapsingToolbarLayout) mRootView
@@ -128,14 +157,20 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
 
             if (mCursor != null) {
                 collapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-//                newsTextView.setText(Html.fromHtml(
-//                        DateUtils.getRelativeTimeSpanString(
-//                                mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-//                                System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-//                                DateUtils.FORMAT_ABBREV_ALL).toString()
-//                                + " by <font color='#ffffff'>"
-//                                + mCursor.getString(ArticleLoader.Query.AUTHOR)
-//                                + "</font>"));
+
+
+                String wroteBy = mCursor.getString(ArticleLoader.Query.AUTHOR) + " - "
+                        + DateUtils.getRelativeTimeSpanString(
+                        mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                        System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_ALL).toString();
+
+                wroteBy = wroteBy.replaceAll(mCursor.getString(ArticleLoader.Query.AUTHOR),
+                        "<font color='#3F7A1A'>" + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                                + "</font>");
+
+                mDateTextView.setText(Html.fromHtml(wroteBy));
+
                 newsTextView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
                 Picasso.with(getActivity()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                         .into(mImageBanner, new Callback() {
@@ -197,5 +232,6 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
         mCursor = null;
         bindViews();
     }
+
 
 }

@@ -9,5 +9,6 @@
 
     <string name="up">Up</string>
     <string name="article_banner_image">Article Banner Image</string>
+    <string name="share_text">Welcome to XYZReader.</string>
 
 </resources>

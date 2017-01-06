@@ -1,20 +1,20 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.Collapsed"
             app:contentScrim="?attr/colorPrimary"
+            app:collapsedTitleTextAppearance="@style/TextAppearance.Collapsed"
             app:expandedTitleTextAppearance="@style/HeaderTitleStyle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleTextColor="@android:color/white">
@@ -36,7 +36,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:title="@string/app_name"
+                android:subtitle="@string/action_share"
                 app:layout_collapseMode="pin"
+                app:contentInsetStartWithNavigation="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:titleTextColor="@android:color/white">
 
@@ -52,13 +54,33 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
-        <TextView
-            android:id="@+id/article_textView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:fontFamily="sans-serif"/>
+            android:paddingBottom="64dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/article_time_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorSecondaryText"
+                android:lineSpacingExtra="@dimen/default_margin"
+                android:padding="@dimen/default_margin"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif"/>
+
+            <TextView
+                android:id="@+id/article_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryText"
+                android:lineSpacingExtra="@dimen/default_margin"
+                android:padding="@dimen/default_margin"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif"/>
+
+        </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 
@@ -73,6 +95,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:tint="@android:color/white"
         android:background="@color/colorPrimary"
-        android:src="@android:drawable/ic_menu_share" />
+        android:src="@drawable/ic_share" />
 
 </android.support.design.widget.CoordinatorLayout>
