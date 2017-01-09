@@ -8,7 +8,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimary</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowContentTransitions">true</item>
         <!-- specify enter and exit transitions -->
         <!-- options are: explode, slide, fade -->

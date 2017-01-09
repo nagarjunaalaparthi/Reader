@@ -3,7 +3,6 @@ package com.example.xyzreader.ui;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -19,18 +18,15 @@ import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 
 /**
@@ -172,18 +168,20 @@ public class ArticleFragment extends Fragment implements LoaderManager.LoaderCal
                 mDateTextView.setText(Html.fromHtml(wroteBy));
 
                 newsTextView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
-                Picasso.with(getActivity()).load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
-                        .into(mImageBanner, new Callback() {
+
+                ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
+                        .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                             @Override
-                            public void onSuccess() {
-                                Bitmap myBitmap = ((BitmapDrawable) mImageBanner.getDrawable()).getBitmap();
+                            public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                                Bitmap myBitmap = imageContainer.getBitmap();
                                 if (myBitmap != null && !myBitmap.isRecycled()) {
                                     Palette.from(myBitmap).generate(paletteListener);
+                                    mImageBanner.setImageBitmap(myBitmap);
                                 }
                             }
 
                             @Override
-                            public void onError() {
+                            public void onErrorResponse(VolleyError volleyError) {
 
                             }
                         });
